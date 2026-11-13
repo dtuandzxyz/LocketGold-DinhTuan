@@ -447,7 +447,7 @@ Object.assign(obj.entries, {
 
     widget_frame_event: JSON.stringify({
         uid: "custom_frame_event_2026",
-        url: "https://i.ibb.co/7dXZMyBg/1.png",
+        url: "https://i.postimg.cc/gjCqWhcn/Khung-Tet-2027-Lan-Vang-Ruc-Ro.png",
         use_local_time_zone: true,
         placement: "below",
         start_at: "2020-01-01T00:00:00",
