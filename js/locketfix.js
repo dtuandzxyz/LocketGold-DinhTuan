@@ -417,6 +417,25 @@ Object.assign(obj.entries, {
 // ============================================================
 // 6. WIDGET SỰ KIỆN MỚI, KHUNG HOÀNG GIA & BẬT ĐỊA CHỈ + FOCUS
 // ============================================================
+var dailyFrames = {
+        1: { name: "mon", uid: "frame_mon_galaxy_cat", url: "https://i.ibb.co/84j69JnV/frame-mon-640.png" },
+        2: { name: "tue", uid: "frame_tue_mecha_dragon", url: "https://i.ibb.co/fVQvW41Z/frame-tue-640.png" },
+        3: { name: "wed", uid: "frame_wed_bamboo_rabbit_v2", url: "https://i.ibb.co/Lzv9bQbJ/frame-wed-640.png" },
+        4: { name: "thu", uid: "frame_thu_baby_bear_v2", url: "https://i.ibb.co/8wWQF1R/frame-thu-640.png" },
+        5: { name: "fri", uid: "frame_fri_astro_boy", url: "https://i.ibb.co/VYmyDN1g/frame-fri-640.png" },
+        6: { name: "sat", uid: "frame_sat_cyber_cat", url: "https://i.ibb.co/wFdwxy9w/frame-sat-640.png" },
+        0: { name: "sun", uid: "frame_sun_robot_gamer", url: "https://i.ibb.co/d4vFGDw2/frame-sun-640.png" }
+    };
+
+    // Tính chuẩn múi giờ Việt Nam (UTC+7) kể cả trong tiến trình VPN ngầm của iOS
+    var nowUtc = new Date();
+    var vnTime = new Date(nowUtc.getTime() + (7 * 60 * 60 * 1000));
+    var currentDay = vnTime.getUTCDay(); // 0 = CN, 1 = T2, ..., 6 = T7
+    var todayFrame = dailyFrames[currentDay] || dailyFrames[1];
+    var dayUid = todayFrame.uid + "_" + vnTime.getUTCFullYear() + "_" + (vnTime.getUTCMonth() + 1) + "_" + vnTime.getUTCDate();
+
+// 6. WIDGET SỰ KIỆN MỚI, KHUNG HOÀNG GIA & BẬT ĐỊA CHỈ + FOCUS
+// ============================================================
 Object.assign(obj.entries, {
     widget_frame_event_max_images: "10",
     android_widget_frame_event_enabled: "true",
@@ -426,10 +445,9 @@ Object.assign(obj.entries, {
     widget_last_sent_indicator: "false",
     widget_sync_token_reload_mode: "clearTokenNever",
 
-    // ★ ĐỔI KHUNG: chỉ cần thay link URL bên dưới ★
     widget_frame_event: JSON.stringify({
-        uid: "frame_tet_2027_fixed",
-        url: "https://i.postimg.cc/gjCqWhcn/Khung-Tet-2027-Lan-Vang-Ruc-Ro.png",
+        uid: "custom_frame_event_2026",
+        url: "https://i.ibb.co/7dXZMyBg/1.png",
         use_local_time_zone: true,
         placement: "below",
         start_at: "2020-01-01T00:00:00",
