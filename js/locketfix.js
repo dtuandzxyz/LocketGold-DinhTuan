@@ -447,7 +447,7 @@ Object.assign(obj.entries, {
 
     widget_frame_event: JSON.stringify({
         uid: "custom_frame_event_2026",
-        url: "https://i.postimg.cc/DfxGY19y/shin.webp",
+        url: "https://i.postimg.cc/zXLkCdyL/shinbuttri.webp",
         use_local_time_zone: true,
         placement: "below",
         start_at: "2020-01-01T00:00:00",
