@@ -169,10 +169,22 @@ else {
     if (body && typeof body === "string") {
         try {
             let obj = JSON.parse(body);
-            const isFriendsOrFeed = /getFriends|getUsers|fetchFriends|getRecipients|recipients|moments|fetchMoments|getMoments|contacts/i.test(reqUrl);
 
-            if (!isFriendsOrFeed && (status === 402 || status === 403 || status === 400)) {
+            // Mở rộng regex để bắt đủ endpoint bạn bè của Locket
+            const isFriendsOrFeed = /getFriends|getUsers|fetchFriends|getRecipients|recipients|moments|fetchMoments|getMoments|contacts|friendships|friend_list|getFeed|fetchFeed|getFollowers|getFollowing|getPeople|searchUsers|suggestedFriends|friend_requests|pendingFriends/i.test(reqUrl);
+
+            // Fix status cho MỌI response (kể cả friends/feed)
+            if (status === 402 || status === 403 || status === 400) {
                 status = 200;
+            }
+
+            // Bảo toàn pagination để không mất trang bạn bè
+            const paginationKeys = ["next_page_token", "page_token", "cursor", "next_cursor", "has_more", "total_count", "count", "limit", "offset"];
+            const savedPagination = {};
+            for (const pk of paginationKeys) {
+                if (pk in obj) savedPagination[pk] = obj[pk];
+                if (obj.data && typeof obj.data === "object" && !Array.isArray(obj.data) && pk in obj.data) savedPagination["data_" + pk] = obj.data[pk];
+                if (obj.result && typeof obj.result === "object" && !Array.isArray(obj.result) && pk in obj.result) savedPagination["result_" + pk] = obj.result[pk];
             }
 
             function unlockSelfUser(userNode) {
@@ -180,7 +192,7 @@ else {
                 applyGoldBadge(userNode);
                 userNode.can_use_filters = true;
                 userNode.can_use_gold_features = true;
-                                                                userNode.filter_access = true;
+                userNode.filter_access = true;
 
                 const actual = (userNode.user && typeof userNode.user === "object") ? userNode.user : userNode;
                 const uid = String(actual.uid || actual.user_id || actual.id || userNode.uid || userNode.user_id || userNode.id || myUid || "").toLowerCase().trim();
@@ -230,10 +242,18 @@ else {
                 unlockSelfUser(obj.data || obj.result || obj.user || obj);
             }
 
-            function transformNode(node) {
+            // Các key không được đệ quy vào (tránh làm hỏng pagination / metadata)
+            const SKIP_KEYS = new Set(["badge", "is_gold", "has_gold", "tier", "gold",
+                "next_page_token", "page_token", "cursor", "next_cursor",
+                "has_more", "total_count", "count", "limit", "offset",
+                "created_at", "updated_at", "timestamp", "expires_at"]);
+
+            function transformNode(node, depth) {
                 if (!node || typeof node !== "object") return;
+                // Giới hạn độ sâu đệ quy để tránh stack overflow với danh sách bạn lớn
+                if ((depth || 0) > 8) return;
                 if (Array.isArray(node)) {
-                    for (let i = 0; i < node.length; i++) transformNode(node[i]);
+                    for (let i = 0; i < node.length; i++) transformNode(node[i], (depth || 0) + 1);
                     return;
                 }
 
@@ -272,14 +292,22 @@ else {
                 }
 
                 for (let k of Object.keys(node)) {
-                    if (k !== "badge" && k !== "is_gold" && k !== "has_gold" && k !== "tier" && k !== "gold") {
+                    if (!SKIP_KEYS.has(k)) {
                         if (vipSet.has(k.toLowerCase().trim()) && node[k] && typeof node[k] === "object") applyGoldBadge(node[k]);
-                        transformNode(node[k]);
+                        transformNode(node[k], (depth || 0) + 1);
                     }
                 }
             }
 
-            transformNode(obj);
+            transformNode(obj, 0);
+
+            // Khôi phục pagination sau khi transform (tránh bị xóa nhầm)
+            for (const pk of paginationKeys) {
+                if ("data_" + pk in savedPagination && obj.data && typeof obj.data === "object") obj.data[pk] = savedPagination["data_" + pk];
+                if ("result_" + pk in savedPagination && obj.result && typeof obj.result === "object") obj.result[pk] = savedPagination["result_" + pk];
+                if (pk in savedPagination) obj[pk] = savedPagination[pk];
+            }
+
             body = JSON.stringify(obj);
         } catch (e) {}
     }
