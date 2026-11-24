@@ -212,6 +212,17 @@ else {
                 status = 200;
             }
 
+            // *** BẢO VỆ DANH SÁCH BẠN BÈ: endpoint bạn bè/feed → pass-through, không transform ***
+            if (isFriendsOrFeed) {
+                let fhFriends = Object.assign({}, ($response && $response.headers) || {});
+                delete fhFriends["Content-Encoding"]; delete fhFriends["content-encoding"];
+                delete fhFriends["Content-Length"];   delete fhFriends["content-length"];
+                delete fhFriends["Transfer-Encoding"];delete fhFriends["transfer-encoding"];
+                fhFriends["content-type"] = "application/json; charset=utf-8";
+                $done({ status: status, headers: fhFriends, body: JSON.stringify(obj) });
+                return;
+            }
+
             // Bảo toàn pagination để không mất trang bạn bè
             const paginationKeys = ["next_page_token", "page_token", "cursor", "next_cursor", "has_more", "total_count", "count", "limit", "offset"];
             const savedPagination = {};

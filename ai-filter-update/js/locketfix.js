@@ -202,7 +202,31 @@ Object.assign(obj.entries, {
     all_filters_free: "true",
     unlocked_filters: "true",
     camera_filter_max_count: "50",
-    max_camera_filters: "50"
+    max_camera_filters: "50",
+    // ---- Camera Filter Config: danh sách filter hiển thị trong sheet & picker ----
+    camera_filter_config: JSON.stringify({
+        allows_custom_filters: true,
+        show_filter_button: true,
+        sheet_enabled: true,
+        open_sheet_immediately: true,
+        sheet_filters: [
+            { title: { en: "Goofy" },     filter_ids: ["okay_wig", "influencer", "looks_maxxing", "toothless", "bye_brows"] },
+            { title: { en: "Looks" },     filter_ids: ["bowling_ball", "blonde_bleached", "beard", "bob_cut", "buns", "tatted", "mohawk", "braces"] },
+            { title: { en: "Celebrate" }, filter_ids: ["slimed", "princess", "disco_lights", "cash_money", "happy_birthday"] },
+            { title: { en: "Cute" },      filter_ids: ["cutesy", "sticker_face", "flower_crown", "love_bug"] },
+            { title: { en: "Costumes" },  filter_ids: ["wedding", "cowboy_cowgirl", "giraffe", "clown"] },
+            { title: { en: "Holidays" },  filter_ids: ["easter_bunney_cutout", "easter_chick_cutout", "bearded", "leprechaun", "lucky_face", "sweet_hearts", "elf_cutout", "santa_cutout", "frosty"] }
+        ],
+        picker_filters: [
+            "okay_wig", "influencer", "looks_maxxing", "toothless", "bye_brows",
+            "bowling_ball", "blonde_bleached", "beard", "bob_cut", "buns",
+            "tatted", "mohawk", "braces", "slimed", "princess",
+            "disco_lights", "cash_money", "happy_birthday", "cutesy", "sticker_face",
+            "flower_crown", "love_bug", "wedding", "cowboy_cowgirl", "giraffe",
+            "clown", "easter_bunney_cutout", "easter_chick_cutout", "bearded", "leprechaun",
+            "lucky_face", "sweet_hearts", "elf_cutout", "santa_cutout", "frosty"
+        ]
+    })
 });
 
 // 2. CHẶN QUẢNG CÁO & TẮT TRACKING (SENTRY)
